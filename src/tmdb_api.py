@@ -70,6 +70,7 @@ def fetch_superhero_shows_movies(keywords=SUPERHERO_KEYWORDS, max_pages=2, cache
     """
     Fetches both TV shows and movies from TMDb matching superhero-related keywords.
     Caches results to a local JSON file.
+    Filters for popularity > 10 and vote_count > 50.
     """
     all_results = defaultdict(dict)
     for media_type in ['tv', 'movie']:
@@ -80,7 +81,9 @@ def fetch_superhero_shows_movies(keywords=SUPERHERO_KEYWORDS, max_pages=2, cache
                 # Avoid duplicates by TMDb ID and media type
                 if tmdb_id not in all_results:
                     if is_superhero_result(result):
-                        all_results[tmdb_id] = result
+                        # Filter for popularity and vote_count
+                        if result.get('popularity', 0) > 10 and result.get('vote_count', 0) > 50:
+                            all_results[tmdb_id] = result
     # Convert to list
     filtered_results = list(all_results.values())
     # Cache to file
